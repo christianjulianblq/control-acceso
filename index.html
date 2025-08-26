@@ -306,17 +306,17 @@ function mostrarQR(qr_id, nombre){
 
 // ===== Envío a Google Sheets =====
 function enviarGoogleSheets(data){
-  console.log("📤 Enviando a Google Sheets:", data);
-  if(typeof GOOGLE_SHEETS_WEBHOOK !== "string" || !GOOGLE_SHEETS_WEBHOOK) return;
-  fetch(GOOGLE_SHEETS_WEBHOOK, {
+  console.log("📤 Enviando a Google Sheets vía proxy:", data);
+  fetch("/api/sheets", {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
     body: JSON.stringify(data)
   })
   .then(r => r.text())
-  .then(txt => console.log("📥 Respuesta de Google Sheets:", txt))
-  .catch(err => console.error("❌ Error al enviar a Google Sheets:", err));
+  .then(txt => console.log("📥 Respuesta de Google Sheets (proxy):", txt))
+  .catch(err => console.error("❌ Error al enviar a Google Sheets vía proxy:", err));
 }
+
 
 
 // ===== Búsqueda por nombre =====
