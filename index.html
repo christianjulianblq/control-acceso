@@ -248,8 +248,10 @@ async function onSubmitQR(e){
     e.target.reset();
     document.getElementById('qr-fecha').value = hoyISO();
   }else{
-    alert("Error al guardar en Supabase");
-  }
+  console.error("Supabase error (QR):", error);
+  alert("Error al guardar en Supabase: " + error.message);
+}
+
 }
 
 async function onSubmitVisitante(e){
@@ -272,8 +274,10 @@ async function onSubmitVisitante(e){
     alert("Visitante registrado");
     e.target.reset();
   }else{
-    alert("Error al guardar en Supabase");
-  }
+  console.error("Supabase error (Visitante):", error);
+  alert("Error al guardar en Supabase: " + error.message);
+}
+
 }
 
 // ===== QR generado =====
