@@ -3,4 +3,4 @@ const USERNAME = "admin";
 const PASSWORD = "1234";
 const SUPABASE_URL = "https://gtruqvwrsmhhnflwtxdt.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0cnVxdndyc21oaG5mbHd0eGR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4MDM4ODQsImV4cCI6MjA3MTM3OTg4NH0.ZqIINGhpbtgAhyt_-T5KKmWeITbqzX5lp3VtSlDCkRk";
-const GOOGLE_SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbzExpKgafaY2AGSY1lFrw7bATfVhLzMVZh2RjFnPtu0hB2BqLAwCcN3HH1-Bban0X0q/exec";
+const GOOGLE_SHEETS_WEBHOOK = "https://script.google.com/macros/s/AKfycbzeaHWA8Ph5BRf6tooYwnJj08JVTUnZvjVTtGcMhki0WzzQm8ehjhpwFtXldGrjfM4T/exec";
