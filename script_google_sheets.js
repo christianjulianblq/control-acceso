@@ -1,12 +1,65 @@
 function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
+  var d = JSON.parse(e.postData.contents);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (data.tipo === "registro_qr") {
-    var sheet1 = ss.getSheetByName("registro_qr") || ss.insertSheet("registro_qr");
-    sheet1.appendRow([new Date(), data.nombre, data.correo , data.departamento , data.hora_entrada, data.hora_salida, data.qr_id,  data.telefono , data.motivo , data.delegacion , data.negocio]);
-  } else if (data.tipo === "registro_visitantes") {
-    var sheet2 = ss.getSheetByName("registro_visitantes") || ss.insertSheet("registro_visitantes");
-    sheet2.appendRow([new Date(), data.nombre, data.correo, data.fecha_nac, data.domicilio, data.telefono, data.departamento, data.hora_entrada, data.hora_salida, data.qr_id,  data.motivo, data.delegacion, data.negocio]);
+
+  if (d.tipo === "registro_qr") {
+    var sh = ss.getSheetByName("registro_qr") || ss.insertSheet("registro_qr");
+    // Si la hoja está vacía, escribimos encabezados
+    if (sh.getLastRow() === 0) {
+      sh.appendRow(["Fecha registro", "Nombre", "Correo", "Teléfono", "Motivo", "Delegación", "Negocio", "Fecha", "Departamento", "Hora entrada", "Hora salida", "QR ID"]);
+    }
+    sh.appendRow([
+      new Date(),
+      d.nombre,
+      d.correo,
+      d.telefono || "",
+      d.motivo || "",
+      d.delegacion || "",
+      d.negocio || "",
+      d.fecha,
+      d.departamento,
+      d.hora_entrada,
+      d.hora_salida,
+      d.qr_id
+    ]);
+  } 
+  else if (d.tipo === "registro_visitantes") {
+    var sh2 = ss.getSheetByName("registro_visitantes") || ss.insertSheet("registro_visitantes");
+    if (sh2.getLastRow() === 0) {
+      sh2.appendRow(["Fecha registro", "Nombre", "Correo", "Fecha Nac", "Domicilio", "Teléfono", "Motivo", "Delegación", "Negocio", "Departamento", "Hora entrada", "Hora salida", "QR ID"]);
+    }
+    sh2.appendRow([
+      new Date(),
+      d.nombre,
+      d.correo,
+      d.fecha_nac,
+      d.domicilio,
+      d.telefono || "",
+      d.motivo || "",
+      d.delegacion || "",
+      d.negocio || "",
+      d.departamento,
+      d.hora_entrada,
+      d.hora_salida,
+      d.qr_id
+    ]);
+  } 
+  else if (d.tipo === "acceso") {
+    var sh3 = ss.getSheetByName("accesos") || ss.insertSheet("accesos");
+    if (sh3.getLastRow() === 0) {
+      sh3.appendRow(["Fecha registro", "Nombre", "Correo", "Departamento", "Fecha", "Hora", "QR ID", "Tipo"]);
+    }
+    sh3.appendRow([
+      new Date(),
+      d.nombre,
+      d.correo,
+      d.departamento,
+      d.fecha,
+      d.hora,
+      d.qr_id,
+      d.tipo
+    ]);
   }
-  return ContentService.createTextOutput("OK");
+
+  return ContentService.createTextOutput("ok");
 }
