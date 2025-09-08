@@ -321,7 +321,7 @@ function mostrarQR(qr_id, nombre){
 
 // ===== Envío a Google Sheets =====
 function enviarGoogleSheets(data){
-  console.log("📤 Enviando a Google Sheets vía proxy:", data);
+  console.log("📤 Enviando a Google Sheets vía proxy:", JSON.stringify(data, null, 2));
   fetch("/api/sheets", {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
@@ -331,7 +331,6 @@ function enviarGoogleSheets(data){
   .then(txt => console.log("📥 Respuesta de Google Sheets (proxy):", txt))
   .catch(err => console.error("❌ Error al enviar a Google Sheets vía proxy:", err));
 }
-
 
 
 // ===== Búsqueda por nombre =====
