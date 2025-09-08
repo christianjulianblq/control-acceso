@@ -84,10 +84,10 @@
       <h3>Registro QR</h3>
       <input type="text" id="qr-nombre" placeholder="Nombre completo" required />
       <input type="email" id="qr-correo" placeholder="Correo" required />
-      <input type="tel" id="qr-telefono" placeholder="Teléfono" required />
-      <input type="text" id="qr-motivo" placeholder="Motivo de la visita" required />
-      <input type="text" id="qr-delegacion" placeholder="Delegación (solo para Dirección de Emprendimiento)" />
-      <input type="text" id="qr-negocio" placeholder="Negocio (solo para Dirección de Emprendimiento)" />
+      <input type="tel" id="qr-telefono" placeholder="Teléfono" />
+      <input type="text" id="qr-motivo" placeholder="Motivo" />
+      <input type="text" id="qr-delegacion" placeholder="Delegación (opcional)" />
+      <input type="text" id="qr-negocio" placeholder="Negocio (opcional)" />
       <label for="qr-fecha">Fecha de la cita:</label>
       <input type="date" id="qr-fecha" required />
       <label for="qr-departamento">Departamento:</label>
@@ -121,9 +121,9 @@
       <input type="date" id="vis-fecha-nac" placeholder="Fecha de nacimiento" required />
       <input type="text" id="vis-domicilio" placeholder="Domicilio" required />
       <input type="tel" id="vis-telefono" placeholder="Teléfono" required />
-      <input type="text" id="vis-motivo" placeholder="Motivo de la visita" required />
-      <input type="text" id="vis-delegacion" placeholder="Delegación (solo para Dirección de Emprendimiento)" />
-      <input type="text" id="vis-negocio" placeholder="Negocio (solo para Dirección de Emprendimiento)" />
+      <input type="text" id="vis-motivo" placeholder="Motivo" />
+      <input type="text" id="vis-delegacion" placeholder="Delegación (opcional)" />
+      <input type="text" id="vis-negocio" placeholder="Negocio (opcional)" />
       <select id="vis-departamento" required>
         <option value="Oficina del Secretario">Oficina del Secretario</option>
         <optgroup label="Dirección de Impulso Económico">
@@ -238,20 +238,20 @@ function logout(){
 // ===== Formularios =====
 async function onSubmitQR(e){
   e.preventDefault();
-  const payload = {
-    tipo: "registro_qr",
-    nombre: document.getElementById('qr-nombre').value,
-    correo: document.getElementById('qr-correo').value,
-    telefono: document.getElementById('qr-telefono').value,
-    motivo: document.getElementById('qr-motivo').value,
-    delegacion: document.getElementById('qr-delegacion').value || null,
-    negocio: document.getElementById('qr-negocio').value || null,
-    fecha: document.getElementById('qr-fecha').value,
-    departamento: document.getElementById('qr-departamento').value,
-    hora_entrada: document.getElementById('qr-hora-entrada').value,
-    hora_salida: document.getElementById('qr-hora-salida').value,
-    qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
-  };
+ const payload = {
+  tipo: "registro_qr",
+  nombre: document.getElementById('qr-nombre').value,
+  correo: document.getElementById('qr-correo').value,
+  telefono: document.getElementById('qr-telefono')?.value || "",
+  motivo: document.getElementById('qr-motivo')?.value || "",
+  delegacion: document.getElementById('qr-delegacion')?.value || "",
+  negocio: document.getElementById('qr-negocio')?.value || "",
+  fecha: document.getElementById('qr-fecha').value,
+  departamento: document.getElementById('qr-departamento').value,
+  hora_entrada: document.getElementById('qr-hora-entrada').value,
+  hora_salida: document.getElementById('qr-hora-salida').value,
+  qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
+};
   const { error } = await supabaseClient.from('registro_qr').insert([payload]);
   if(!error){
     enviarGoogleSheets(payload);
@@ -274,10 +274,10 @@ async function onSubmitVisitante(e){
     correo: document.getElementById('vis-correo').value,
     fecha_nac: document.getElementById('vis-fecha-nac').value,
     domicilio: document.getElementById('vis-domicilio').value,
-    telefono: document.getElementById('vis-telefono').value,
-    motivo: document.getElementById('vis-motivo').value,
-    delegacion: document.getElementById('vis-delegacion').value || null,
-    negocio: document.getElementById('vis-negocio').value || null,
+    telefono: document.getElementById('vis-telefono')?.value || "",
+    motivo: document.getElementById('vis-motivo')?.value || "",
+    delegacion: document.getElementById('vis-delegacion')?.value || "",
+    negocio: document.getElementById('vis-negocio')?.value || "",
     departamento: document.getElementById('vis-departamento').value,
     hora_entrada: document.getElementById('vis-hora-entrada').value,
     hora_salida: document.getElementById('vis-hora-salida').value,
