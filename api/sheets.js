@@ -5,6 +5,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    
+  console.log("📥 Datos recibidos en /api/sheets:", req.body);
+
     // URL de tu Google Apps Script
     const webhookUrl = "https://script.google.com/macros/s/AKfycbzeWNCxGg08ok1gGUMbiUDQUJsiXF0gcPrAu4LqYG0bwtcidlICB4VoNxHtAG79jRyo/exec";
 
