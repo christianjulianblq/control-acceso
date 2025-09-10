@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   console.log("📥 Datos recibidos en /api/sheets:", req.body);
 
     // URL de tu Google Apps Script
-    const webhookUrl = "https://script.google.com/macros/s/AKfycbzeWNCxGg08ok1gGUMbiUDQUJsiXF0gcPrAu4LqYG0bwtcidlICB4VoNxHtAG79jRyo/exec";
+    const webhookUrl = "https://script.google.com/macros/s/AKfycbyCIHzuPIzf_aoBuydamkv76mLWi26ssrURH2fYcD9NzAReCyLswvpvkXToqiGh0pU/exec";
 
     // Reenviar la petición a Google Apps Script
     const response = await fetch(webhookUrl, {
