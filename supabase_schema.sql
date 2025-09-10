@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS registro_qr (
   ADD COLUMN telefono text,
   ADD COLUMN motivo text,
   ADD COLUMN delegacion text,
-  ADD COLUMN negocio text;
+  ADD COLUMN negocio text,
   departamento text,
   hora_entrada time,
   hora_salida time,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS registro_visitantes (
   telefono text,
   ADD COLUMN motivo text,
   ADD COLUMN delegacion text,
-  ADD COLUMN negocio text;
+  ADD COLUMN negocio text,
   departamento text,
   hora_entrada time,
   hora_salida time,
