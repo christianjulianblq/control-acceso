@@ -14,399 +14,254 @@
 
 <style>
   :root{
-    --primary:#00ffe1;
-    --bg:#0f2027;
-    --card: rgba(0,0,0,.6);
-    --text:#fff;
-    --text-dark:#000;
+    --primary:#133f66;
+    --bg:#201d42;
+    --card:rgba(32,29,66,0.9);
+    --text:#f2f3f5;
+    --text-muted:#bbc0ce;
+    --border:#828097;
+    --accent:#00ffe1;
   }
+
   *{ box-sizing:border-box; }
-  body{ margin:0; font-family:'Orbitron',sans-serif; color:var(--text); background:var(--bg); }
+  body{
+    margin:0;
+    font-family:'Orbitron',sans-serif;
+    color:var(--text);
+    background:var(--bg);
+  }
+
   header{
     position:fixed; top:0; left:0; right:0;
     display:flex; align-items:center; gap:12px;
-    padding:8px 14px; background:rgba(0,0,0,.8);
-    z-index:10; box-shadow:0 2px 10px rgba(0,0,0,.5);
+    padding:8px 14px;
+    background:#13112b;
+    border-bottom:1px solid var(--border);
+    box-shadow:0 0 10px var(--primary);
+    z-index:10;
   }
-  header img{ height:40px; width:auto; border-radius:10px; }
-  header h1{ margin:0; font-size:1rem; color:var(--primary); text-shadow:0 0 8px var(--primary); flex:1; text-align:center; }
+  header img{
+    height:44px;
+    width:auto;
+    border-radius:8px;
+  }
+  header h1{
+    margin:0;
+    font-size:1rem;
+    color:var(--text);
+    text-shadow:0 0 8px var(--accent);
+    flex:1;
+    text-align:center;
+  }
   #logout-btn{
-    background:var(--primary); color:var(--text-dark); border:none;
-    padding:6px 12px; font-size:.9rem; border-radius:6px; cursor:pointer; display:none;
+    background:var(--primary);
+    color:var(--text);
+    border:none;
+    padding:6px 12px;
+    font-size:.9rem;
+    border-radius:6px;
+    cursor:pointer;
+    display:none;
+    transition:0.2s;
   }
-  #logout-btn:hover{ filter:brightness(1.05); box-shadow:0 0 8px var(--primary); }
+  #logout-btn:hover{
+    filter:brightness(1.2);
+    box-shadow:0 0 10px var(--accent);
+  }
 
-  main{ padding:86px 12px 24px; max-width:820px; margin:auto; }
-  .card{ background:var(--card); padding:16px; border-radius:14px; box-shadow:0 0 16px var(--primary); }
-  .tab-buttons{ display:flex; gap:8px; margin-bottom:12px; }
-  .tab-buttons button{
-    flex:1; padding:10px 12px; border:none; border-radius:10px;
-    background:var(--primary); color:var(--text-dark); cursor:pointer; font-size:1rem;
+  main{
+    padding:86px 12px 24px;
+    max-width:820px;
+    margin:auto;
   }
+
+  .card{
+    background:var(--card);
+    padding:16px;
+    border-radius:14px;
+    box-shadow:0 0 12px var(--border);
+    border:1px solid var(--border);
+  }
+
+  .tab-buttons{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .tab-buttons button{
+    flex:1;
+    padding:10px 12px;
+    border:none;
+    border-radius:10px;
+    background:var(--primary);
+    color:var(--text);
+    cursor:pointer;
+    font-size:1rem;
+    transition:0.2s;
+  }
+  .tab-buttons button:hover{
+    background:var(--accent);
+    color:var(--bg);
+  }
+
   input,select,button,label{ font-size:1rem; }
-  input,select{ width:100%; padding:12px; margin:6px 0; border:none; border-radius:10px; }
-  .hidden{ display:none !important; }
+  input,select{
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#2b2855;
+    color:var(--text);
+  }
+  input::placeholder{ color:var(--text-muted); }
+
+  button[type=submit]{
+    width:100%;
+    background:var(--primary);
+    color:var(--text);
+    border:none;
+    border-radius:10px;
+    padding:12px;
+    cursor:pointer;
+    font-size:1rem;
+    margin-top:10px;
+  }
+  button[type=submit]:hover{
+    background:var(--accent);
+    color:var(--bg);
+  }
+
   #reader{ width:min(420px, 95vw); margin:14px auto; }
-  #scan-btn{ width:100%; padding:12px; border:none; border-radius:10px; background:var(--primary); color:var(--text-dark); cursor:pointer; margin-top:10px; }
+  #scan-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:var(--primary);
+    color:var(--text);
+    cursor:pointer;
+    margin-top:10px;
+  }
+  #scan-btn:hover{ background:var(--accent); color:var(--bg); }
+
   #qrcode{ text-align:center; margin-top:12px; }
   #qrcode canvas{ display:block; margin:8px auto; }
-  #login-msg{ margin-top:8px; color:#ff9; }
-  .helper{ font-size:.92rem; opacity:.85; text-align:center; }
+
+  #login-msg{ margin-top:8px; color:#ffb3b3; }
+  .helper{ font-size:.92rem; opacity:.85; text-align:center; color:var(--text-muted); }
+
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
 <header>
-  <img src="logo.png" alt="Logo">
+  <img src="NuevaHeraldica.png" alt="Logo">
   <h1>Control de acceso Secretaría de Desarrollo Económico</h1>
   <button id="logout-btn" type="button">Cerrar sesión</button>
 </header>
 
 <main>
-  <!-- LOGIN -->
-  <section id="login-section" class="card">
-    <h2>Iniciar sesión</h2>
-    <input type="text" id="login-user" placeholder="Usuario" autocomplete="username" />
-    <input type="password" id="login-pass" placeholder="Contraseña" autocomplete="current-password" />
-    <button id="login-btn" type="button">Entrar</button>
-    <div id="login-msg"></div>
-  </section>
-
-  <!-- APP -->
-  <section id="app-section" class="hidden">
+  <div class="card">
     <div class="tab-buttons">
-      <button data-tab="qr">Registro con cita</button>
-      <button data-tab="visitantes">Registro sin cita</button>
-      <button data-tab="buscar">Buscar acceso</button>
+      <button onclick="showTab('registro')">Registrar acceso</button>
+      <button onclick="showTab('busqueda')">Buscar registro</button>
+      <button onclick="showTab('scanner')">Escanear QR</button>
     </div>
 
-    <!-- REGISTRO QR -->
-    <form id="form-qr" class="card tab-content">
-      <h3>Registro QR</h3>
-      <input type="text" id="qr-nombre" placeholder="Nombre completo" required />
-      <input type="email" id="qr-correo" placeholder="Correo" required />
-      <input type="tel" id="qr-telefono" placeholder="Teléfono" />
-      <input type="text" id="qr-motivo" placeholder="Motivo" />
-      <input type="text" id="qr-delegacion" placeholder="Delegación (opcional)" />
-      <input type="text" id="qr-negocio" placeholder="Negocio (opcional)" />
-      <label for="qr-fecha">Fecha de la cita:</label>
-      <input type="date" id="qr-fecha" required />
-      <label for="qr-departamento">Departamento:</label>
-      <select id="qr-departamento" required>
-        <option value="Oficina del Secretario">Oficina del Secretario</option>
-        <optgroup label="Dirección de Impulso Económico">
-          <option>Dirección de Impulso Económico</option>
-          <option>Licencias de Funcionamiento</option>
-          <option>Fomento al Empleo</option>
-        </optgroup>
-        <option>Dirección de Emprendimiento</option>
-        <option>Dirección de Desarrollo Rural y Agropecuario</option>
-      </select>
-      <label for="qr-hora-entrada">Hora de entrada:</label>
-      <input type="time" id="qr-hora-entrada" required />
-      <label for="qr-hora-salida">Hora de salida:</label>
-      <input type="time" id="qr-hora-salida" required />
-      <button type="submit">Registrar entrada QR</button>
+    <section id="registro" class="tab">
+      <h2>Nuevo registro</h2>
+      <form id="access-form">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Ingresa el nombre" required>
 
-      <div id="qrcode" class="hidden">
-        <h4>QR generado</h4>
-        <!-- aquí va el canvas y el botón de descarga -->
-      </div>
-    </form>
+        <label for="departamento">Departamento</label>
+        <select id="departamento" required>
+          <option value="">Seleccionar...</option>
+          <option value="Oficina del Secretario">Oficina del Secretario</option>
+          <option value="Dirección de Impulso Económico">Dirección de Impulso Económico</option>
+          <option value="Licencias de Funcionamiento">— Licencias de Funcionamiento</option>
+          <option value="Fomento al Empleo">— Fomento al Empleo</option>
+          <option value="Dirección de Emprendimiento">Dirección de Emprendimiento</option>
+          <option value="Dirección de Desarrollo Rural y Agropecuario">Dirección de Desarrollo Rural y Agropecuario</option>
+        </select>
 
-    <!-- REGISTRO VISITANTES -->
-    <form id="form-visitantes" class="card tab-content hidden">
-      <h3>Registro Visitantes</h3>
-      <input type="text" id="vis-nombre" placeholder="Nombre completo" required />
-      <input type="email" id="vis-correo" placeholder="Correo electrónico" required />
-      <input type="date" id="vis-fecha-nac" placeholder="Fecha de nacimiento" required />
-      <input type="text" id="vis-domicilio" placeholder="Domicilio" required />
-      <input type="tel" id="vis-telefono" placeholder="Teléfono" required />
-      <input type="text" id="vis-motivo" placeholder="Motivo" />
-      <input type="text" id="vis-delegacion" placeholder="Delegación (opcional)" />
-      <input type="text" id="vis-negocio" placeholder="Negocio (opcional)" />
-      <select id="vis-departamento" required>
-        <option value="Oficina del Secretario">Oficina del Secretario</option>
-        <optgroup label="Dirección de Impulso Económico">
-          <option>Dirección de Impulso Económico</option>
-          <option>Licencias de Funcionamiento</option>
-          <option>Fomento al Empleo</option>
-        </optgroup>
-        <option>Dirección de Emprendimiento</option>
-        <option>Dirección de Desarrollo Rural y Agropecuario</option>
-      </select>
-      <label>Hora de entrada:</label>
-      <input type="time" id="vis-hora-entrada" required />
-      <label>Hora de salida:</label>
-      <input type="time" id="vis-hora-salida" required />
-      <button type="submit">Registrar visitante</button>
-    </form>
+        <button type="submit">Registrar acceso</button>
+      </form>
+      <div id="qrcode"></div>
+    </section>
 
-    <!-- BUSCAR / ESCANEO -->
-    <div id="buscar-acceso" class="card tab-content hidden">
-      <h3>Buscar acceso</h3>
-      <input type="text" id="buscar-nombre" placeholder="Buscar por nombre..." />
-      <div id="resultado" style="white-space:pre-wrap; margin-top:8px;"></div>
-      <button id="scan-btn" type="button">📷 Escanear QR con la cámara</button>
-      <div id="reader" class="hidden"></div>
-      <p id="scan-help" class="helper hidden">Apunta tu cámara al QR para registrar acceso</p>
-    </div>
-  </section>
+    <section id="busqueda" class="tab hidden">
+      <h2>Buscar por nombre</h2>
+      <input type="text" id="search-input" placeholder="Escribe un nombre">
+      <button id="search-btn" type="button">Buscar</button>
+      <div id="search-result"></div>
+    </section>
+
+    <section id="scanner" class="tab hidden">
+      <h2>Escanear código QR</h2>
+      <div id="reader"></div>
+      <button id="scan-btn" type="button">Iniciar escaneo</button>
+      <div id="scan-result"></div>
+    </section>
+  </div>
 </main>
 
 <script>
-// ===== Helpers de fecha/hora =====
-function hoyISO(){ const d=new Date(); return d.toISOString().slice(0,10); } // YYYY-MM-DD
-function horaLocal(){ const d=new Date(); return d.toLocaleTimeString(); }
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ===== Estado global =====
-let html5QrCode = null;
-let scannerRunning = false;
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Cambio de pestañas
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t => t.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 
-// ===== DOM Ready =====
-document.addEventListener('DOMContentLoaded', () => {
-  // Login
-  document.getElementById('login-btn').addEventListener('click', login);
-  document.getElementById('logout-btn').addEventListener('click', logout);
-
-  // Tabs
-  document.querySelectorAll('.tab-buttons button').forEach(btn => {
-    btn.addEventListener('click', () => showTab(btn.dataset.tab));
-  });
-
-  // Formularios
-  document.getElementById('form-qr').addEventListener('submit', onSubmitQR);
-  document.getElementById('form-visitantes').addEventListener('submit', onSubmitVisitante);
-
-  // Buscar por nombre
-  document.getElementById('buscar-nombre').addEventListener('input', buscarPorNombre);
-
-  // Escaneo
-  document.getElementById('scan-btn').addEventListener('click', startScanner);
-
-  // Estado de sesión
-  if(localStorage.getItem('logged') === 'true'){
-    mostrarApp();
-  } else {
-    mostrarLogin();
+// Registro de acceso
+document.getElementById('access-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const nombre = document.getElementById('nombre').value.trim();
+  let departamento = document.getElementById('departamento').value.trim();
+  if (departamento === 'Licencias de Funcionamiento' || departamento === 'Fomento al Empleo'){
+    departamento = 'Dirección de Impulso Económico (' + departamento + ')';
   }
+  const fecha = new Date().toLocaleString('es-MX', {timeZone:'America/Mexico_City'});
 
-  // Fecha por defecto en Registro QR
-  const f = document.getElementById('qr-fecha');
-  if(!f.value) f.value = hoyISO();
+  const { data, error } = await supabase.from('accesos').insert([{ nombre, departamento, fecha }]);
+  if (error){ alert('Error al registrar: '+error.message); return; }
+
+  const qrData = `Nombre: ${nombre}\nDepto: ${departamento}\nFecha: ${fecha}`;
+  document.getElementById('qrcode').innerHTML = '';
+  QRCode.toCanvas(document.createElement('canvas'), qrData, {width:180}, (err, canvas)=>{
+    if (!err) document.getElementById('qrcode').appendChild(canvas);
+  });
+  alert('Registro exitoso ✅');
+  e.target.reset();
 });
 
-// ===== Navegación =====
-function mostrarLogin(){
-  document.getElementById('login-section').classList.remove('hidden');
-  document.getElementById('app-section').classList.add('hidden');
-  document.getElementById('logout-btn').style.display='none';
-  stopScanner();
-}
-function mostrarApp(){
-  document.getElementById('login-section').classList.add('hidden');
-  document.getElementById('app-section').classList.remove('hidden');
-  document.getElementById('logout-btn').style.display='inline-block';
-  showTab('qr');
-}
-function showTab(which){
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  if(which === 'qr') document.getElementById('form-qr').classList.remove('hidden');
-  if(which === 'visitantes') document.getElementById('form-visitantes').classList.remove('hidden');
-  if(which === 'buscar') document.getElementById('buscar-acceso').classList.remove('hidden');
-  if(which !== 'buscar') stopScanner();
-}
-
-// ===== Login / Logout =====
-function login(){
-  const u = document.getElementById('login-user').value.trim();
-  const p = document.getElementById('login-pass').value.trim();
-  const msg = document.getElementById('login-msg');
-  if(u === USERNAME && p === PASSWORD){
-    localStorage.setItem('logged','true');
-    msg.textContent = "";
-    mostrarApp();
-  }else{
-    msg.textContent = "Usuario o contraseña incorrectos";
+// Buscar por nombre
+document.getElementById('search-btn').addEventListener('click', async ()=>{
+  const nombre = document.getElementById('search-input').value.trim();
+  const { data, error } = await supabase.from('accesos').select('*').ilike('nombre', `%${nombre}%`);
+  const result = document.getElementById('search-result');
+  if (error || !data.length){
+    result.innerHTML = '<p class="helper">No se encontraron resultados</p>';
+  } else {
+    result.innerHTML = data.map(r => `<p><b>${r.nombre}</b> — ${r.departamento}<br><small>${r.fecha}</small></p>`).join('');
   }
-}
-function logout(){
-  localStorage.removeItem('logged');
-  mostrarLogin();
-}
+});
 
-// ===== Formularios =====
-async function onSubmitQR(e){
-  e.preventDefault();
- const payload = {
-  tipo: "registro_qr",
-  nombre: document.getElementById('qr-nombre').value,
-  correo: document.getElementById('qr-correo').value,
-  telefono: document.getElementById('qr-telefono')?.value || "",
-  motivo: document.getElementById('qr-motivo')?.value || "",
-  delegacion: document.getElementById('qr-delegacion')?.value || "",
-  negocio: document.getElementById('qr-negocio')?.value || "",
-  fecha: document.getElementById('qr-fecha').value,
-  departamento: document.getElementById('qr-departamento').value,
-  hora_entrada: document.getElementById('qr-hora-entrada').value,
-  hora_salida: document.getElementById('qr-hora-salida').value,
-  qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
-};
-  const { error } = await supabaseClient.from('registro_qr').insert([payload]);
-  if(!error){
-    enviarGoogleSheets(payload);
-    mostrarQR(payload.qr_id, payload.nombre);
-    alert("Registro QR guardado");
-    e.target.reset();
-    document.getElementById('qr-fecha').value = hoyISO();
-  }else{
-  console.error("Supabase error (QR):", error);
-  alert("Error al guardar en Supabase: " + error.message);
-}
-
-}
-
-async function onSubmitVisitante(e){
-  e.preventDefault();
-  const payload = {
-    tipo: "registro_visitantes",
-    nombre: document.getElementById('vis-nombre').value,
-    correo: document.getElementById('vis-correo').value,
-    fecha_nac: document.getElementById('vis-fecha-nac').value,
-    domicilio: document.getElementById('vis-domicilio').value,
-    telefono: document.getElementById('vis-telefono')?.value || "",
-    motivo: document.getElementById('vis-motivo')?.value || "",
-    delegacion: document.getElementById('vis-delegacion')?.value || "",
-    negocio: document.getElementById('vis-negocio')?.value || "",
-    departamento: document.getElementById('vis-departamento').value,
-    hora_entrada: document.getElementById('vis-hora-entrada').value,
-    hora_salida: document.getElementById('vis-hora-salida').value,
-    qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
-  };
-  const { error } = await supabaseClient.from('registro_visitantes').insert([payload]);
-  if(!error){
-    enviarGoogleSheets(payload);
-    alert("Visitante registrado");
-    e.target.reset();
-  }else{
-  console.error("Supabase error (Visitante):", error);
-  alert("Error al guardar en Supabase: " + error.message);
-}
-
-}
-
-// ===== QR generado =====
-function mostrarQR(qr_id, nombre){
-  const cont = document.getElementById('qrcode');
-  cont.classList.remove('hidden');
-  cont.innerHTML = "";
-  const canvas = document.createElement('canvas');
-  QRCode.toCanvas(canvas, qr_id, { width: 240 }, function(err){});
-  cont.appendChild(canvas);
-  const p = document.createElement('p');
-  p.textContent = "Este QR corresponde a: " + (nombre || "—");
-  cont.appendChild(p);
-  const a = document.createElement('a');
-  a.download = (nombre || 'qr').replace(/\s+/g,'_') + "_qr.png";
-  a.href = canvas.toDataURL('image/png');
-  a.textContent = "Descargar QR";
-  a.style.display = "inline-block";
-  a.style.marginTop = "8px";
-  a.style.background = "var(--primary)";
-  a.style.color = "var(--text-dark)";
-  a.style.padding = "8px 12px";
-  a.style.borderRadius = "10px";
-  cont.appendChild(a);
-}
-
-// ===== Envío a Google Sheets =====
-function enviarGoogleSheets(data){
-  console.log("📤 Enviando a Google Sheets vía proxy:", JSON.stringify(data, null, 2));
-  fetch("/api/sheets", {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify(data)
-  })
-  .then(r => r.text())
-  .then(txt => console.log("📥 Respuesta de Google Sheets (proxy):", txt))
-  .catch(err => console.error("❌ Error al enviar a Google Sheets vía proxy:", err));
-}
-
-
-// ===== Búsqueda por nombre =====
-async function buscarPorNombre(){
-  const nombre = document.getElementById('buscar-nombre').value.trim();
-  const out = document.getElementById('resultado');
-  if(!nombre){ out.textContent=""; return; }
-  const { data, error } = await supabaseClient.from('registro_qr').select('*').ilike('nombre', `%${nombre}%`);
-  out.textContent = (data && data.length) ? JSON.stringify(data[0], null, 2) : "No encontrado";
-}
-
-// ===== Escáner =====
-async function startScanner(){
-  if(scannerRunning) return;
-  const btn = document.getElementById('scan-btn');
-  const reader = document.getElementById('reader');
-  const help = document.getElementById('scan-help');
-  btn.classList.add('hidden');
-  reader.classList.remove('hidden');
-  help.classList.remove('hidden');
-  if(!html5QrCode) html5QrCode = new Html5Qrcode('reader');
-  try{
-    const cams = await Html5Qrcode.getCameras();
-    if(!cams || !cams.length){ alert('No se encontró cámara'); stopScanner(); return; }
-    await html5QrCode.start(
-      cams[0].id,
-      { fps: 10, qrbox: Math.min(260, Math.floor(window.innerWidth*0.8)) },
-      onScanSuccess
-    );
-    scannerRunning = true;
-  }catch(e){
-    stopScanner();
-  }
-}
-async function stopScanner(){
-  const btn = document.getElementById('scan-btn');
-  const reader = document.getElementById('reader');
-  const help = document.getElementById('scan-help');
-  if(html5QrCode && scannerRunning){
-    try{ await html5QrCode.stop(); }catch(e){}
-  }
-  scannerRunning = false;
-  reader.innerHTML = "";
-  reader.classList.add('hidden');
-  help.classList.add('hidden');
-  btn.classList.remove('hidden');
-}
-async function onScanSuccess(decodedText){
-  await stopScanner();
-  const out = document.getElementById('resultado');
-  // Buscar registro original
-  const { data } = await supabaseClient
-    .from('registro_qr')
-    .select('*')
-    .eq('qr_id', decodedText)
-    .single();
-  if(data){
-    // Registrar acceso como nueva fila (histórico)
-    const acceso = {
-      tipo: "acceso",
-      nombre: data.nombre,
-      correo: data.correo,
-      departamento: data.departamento,
-      fecha: hoyISO(),
-      hora: horaLocal(),
-      qr_id: decodedText
-    };
-    await supabaseClient.from('accesos').insert([acceso]);
-    enviarGoogleSheets(acceso);
-    out.textContent = "✅ Entrada registrada para " + data.nombre + " a las " + acceso.hora + " del " + acceso.fecha;
-  }else{
-    out.textContent = "QR no encontrado";
-  }
-}
+// Escaneo QR
+document.getElementById('scan-btn').addEventListener('click', ()=>{
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start({facingMode:"environment"}, {fps:10, qrbox:250},
+    qr => {
+      document.getElementById('scan-result').innerHTML = `<p>${qr}</p>`;
+      html5QrCode.stop();
+    },
+    err => {}
+  ).catch(err => console.log(err));
+});
 </script>
 </body>
 </html>
-<!-- by christian julian gonzalez espinoza -->
 
