@@ -60,7 +60,10 @@
   <h1>Control de acceso Secretaría de Desarrollo Económico</h1>
   <button id="logout-btn" type="button">Cerrar sesión</button>
 </header>
-
+  /* Fuerza todos los textos dentro del botón de escanear QR a ser blancos */
+#escanearQR, #btnEscanearQR, label[for="escanearQR"], .qr-scan-btn {
+  color: #fff !important;
+}
 <main>
   <!-- LOGIN -->
   <section id="login-section" class="card">
