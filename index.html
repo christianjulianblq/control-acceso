@@ -10,7 +10,32 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script src="config.js"></script>
+<script src="config.js">
+  // ===== Tabs =====
+function showTab(tab){
+  stopScanner(); // por si está activo el lector
+
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+
+  if(tab === "qr"){
+    document.getElementById('form-qr').classList.remove('hidden');
+  }
+  if(tab === "visitantes"){
+    document.getElementById('form-visitantes').classList.remove('hidden');
+  }
+  if(tab === "buscar"){
+    document.getElementById('buscar-acceso').classList.remove('hidden');
+  }
+
+  // Marcar botón activo
+  document.querySelectorAll('.tab-buttons button').forEach(btn => {
+    btn.style.filter = "brightness(1)";
+  });
+  const btn = document.querySelector(`.tab-buttons button[data-tab="${tab}"]`);
+  if(btn){ btn.style.filter = "brightness(1.3)"; }
+}
+
+</script>
 
 <style>
   :root{
