@@ -5,14 +5,8 @@ export default async function handler(req, res) {
   }
 
   try {
-
-    // Agregar automáticamente el "creado_por" si no viene en el body
-    const data = {
-      ...req.body,
-      creado_por: req.body.creado_por || "DESCONOCIDO"
-    };
-
-    console.log("📥 Datos recibidos en /api/sheets:", data);
+    
+  console.log("📥 Datos recibidos en /api/sheets:", req.body);
 
     // URL de tu Google Apps Script
     const webhookUrl = "https://script.google.com/macros/s/AKfycbwjh0BjaeU9lrdaAbRj6LsyW9B7QEFsRBAsqrMPTnjFInyOMXetk7tp4hAaV3InLqAs/exec";
@@ -21,13 +15,13 @@ export default async function handler(req, res) {
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+      body: JSON.stringify(req.body)
     });
-
-    console.log("📤 Enviando a Google Apps Script:", JSON.stringify(data));
+    console.log("📤 Enviando a Google Apps Script:", JSON.stringify(req.body));
 
     const text = await response.text();
 
+    // Responder al navegador
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(200).send(text);
 
