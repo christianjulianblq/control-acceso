@@ -47,11 +47,11 @@
   input,select{ width:100%; padding:12px; margin:6px 0; border:none; border-radius:10px; }
   .hidden{ display:none !important; }
   #reader{ width:min(420px, 95vw); margin:14px auto; }
-  #scan-btn{ width:100%; padding:12px; border:none; border-radius:10px; background:var(--primary); color:#f2f3f5; cursor:pointer; margin-top:10px; }
+  #scan-btn{ width:100%; padding:12px; border:none; border-radius:10px; background:var(--primary); color:var(--text-dark); cursor:pointer; margin-top:10px; }
   #qrcode{ text-align:center; margin-top:12px; }
   #qrcode canvas{ display:block; margin:8px auto; }
   #login-msg{ margin-top:8px; color:#ff9; }
-  .helper{ font-size:.92rem; opacity:.85; text-align:center; color:white; }
+  .helper{ font-size:.92rem; opacity:.85; text-align:center; }
 </style>
 </head>
 <body>
@@ -109,6 +109,7 @@
 
       <div id="qrcode" class="hidden">
         <h4>QR generado</h4>
+        <!-- aquí va el canvas y el botón de descarga -->
       </div>
     </form>
 
@@ -117,7 +118,7 @@
       <h3>Registro Visitantes</h3>
       <input type="text" id="vis-nombre" placeholder="Nombre completo" required />
       <input type="email" id="vis-correo" placeholder="Correo electrónico" required />
-      <input type="date" id="vis-fecha-nac" required />
+      <input type="date" id="vis-fecha-nac" placeholder="Fecha de nacimiento" required />
       <input type="text" id="vis-domicilio" placeholder="Domicilio" required />
       <input type="tel" id="vis-telefono" placeholder="Teléfono" required />
       <input type="text" id="vis-motivo" placeholder="Motivo" />
@@ -153,14 +154,9 @@
 </main>
 
 <script>
-// ===== Login Credenciales =====
-const USERNAME = "recepcion";  // cámbialo
-const PASSWORD = "1234";       // cámbialo
-let usuarioActual = "";
-
 // ===== Helpers de fecha/hora =====
-function hoyISO(){ return new Date().toISOString().slice(0,10); }
-function horaLocal(){ return new Date().toLocaleTimeString(); }
+function hoyISO(){ const d=new Date(); return d.toISOString().slice(0,10); } // YYYY-MM-DD
+function horaLocal(){ const d=new Date(); return d.toLocaleTimeString(); }
 
 // ===== Estado global =====
 let html5QrCode = null;
@@ -169,25 +165,33 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== DOM Ready =====
 document.addEventListener('DOMContentLoaded', () => {
-  // Recuperar sesión previa
-  if(localStorage.getItem('logged') === 'true'){
-    usuarioActual = localStorage.getItem('usuarioActual') || "";
-    mostrarApp();
-  }
-
+  // Login
   document.getElementById('login-btn').addEventListener('click', login);
   document.getElementById('logout-btn').addEventListener('click', logout);
 
+  // Tabs
   document.querySelectorAll('.tab-buttons button').forEach(btn => {
     btn.addEventListener('click', () => showTab(btn.dataset.tab));
   });
 
+  // Formularios
   document.getElementById('form-qr').addEventListener('submit', onSubmitQR);
   document.getElementById('form-visitantes').addEventListener('submit', onSubmitVisitante);
 
+  // Buscar por nombre
   document.getElementById('buscar-nombre').addEventListener('input', buscarPorNombre);
+
+  // Escaneo
   document.getElementById('scan-btn').addEventListener('click', startScanner);
 
+  // Estado de sesión
+  if(localStorage.getItem('logged') === 'true'){
+    mostrarApp();
+  } else {
+    mostrarLogin();
+  }
+
+  // Fecha por defecto en Registro QR
   const f = document.getElementById('qr-fecha');
   if(!f.value) f.value = hoyISO();
 });
@@ -205,18 +209,21 @@ function mostrarApp(){
   document.getElementById('logout-btn').style.display='inline-block';
   showTab('qr');
 }
+function showTab(which){
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  if(which === 'qr') document.getElementById('form-qr').classList.remove('hidden');
+  if(which === 'visitantes') document.getElementById('form-visitantes').classList.remove('hidden');
+  if(which === 'buscar') document.getElementById('buscar-acceso').classList.remove('hidden');
+  if(which !== 'buscar') stopScanner();
+}
 
 // ===== Login / Logout =====
 function login(){
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value.trim();
   const msg = document.getElementById('login-msg');
-
   if(u === USERNAME && p === PASSWORD){
-    usuarioActual = u;
     localStorage.setItem('logged','true');
-    localStorage.setItem('usuarioActual', u);
-
     msg.textContent = "";
     mostrarApp();
   }else{
@@ -225,33 +232,27 @@ function login(){
 }
 function logout(){
   localStorage.removeItem('logged');
-  localStorage.removeItem('usuarioActual');
-  usuarioActual = "";
   mostrarLogin();
 }
 
-// ===== Registrar QR =====
+// ===== Formularios =====
 async function onSubmitQR(e){
   e.preventDefault();
-
-  const payload = {
-    tipo: "registro_qr",
-    creado_por: usuarioActual,
-    nombre: document.getElementById('qr-nombre').value,
-    correo: document.getElementById('qr-correo').value,
-    telefono: document.getElementById('qr-telefono').value || "",
-    motivo: document.getElementById('qr-motivo').value || "",
-    delegacion: document.getElementById('qr-delegacion').value || "",
-    negocio: document.getElementById('qr-negocio').value || "",
-    fecha: document.getElementById('qr-fecha').value,
-    departamento: document.getElementById('qr-departamento').value,
-    hora_entrada: document.getElementById('qr-hora-entrada').value,
-    hora_salida: document.getElementById('qr-hora-salida').value,
-    qr_id: crypto.randomUUID()
-  };
-
+ const payload = {
+  tipo: "registro_qr",
+  nombre: document.getElementById('qr-nombre').value,
+  correo: document.getElementById('qr-correo').value,
+  telefono: document.getElementById('qr-telefono')?.value || "",
+  motivo: document.getElementById('qr-motivo')?.value || "",
+  delegacion: document.getElementById('qr-delegacion')?.value || "",
+  negocio: document.getElementById('qr-negocio')?.value || "",
+  fecha: document.getElementById('qr-fecha').value,
+  departamento: document.getElementById('qr-departamento').value,
+  hora_entrada: document.getElementById('qr-hora-entrada').value,
+  hora_salida: document.getElementById('qr-hora-salida').value,
+  qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
+};
   const { error } = await supabaseClient.from('registro_qr').insert([payload]);
-
   if(!error){
     enviarGoogleSheets(payload);
     mostrarQR(payload.qr_id, payload.nombre);
@@ -259,58 +260,52 @@ async function onSubmitQR(e){
     e.target.reset();
     document.getElementById('qr-fecha').value = hoyISO();
   }else{
-    console.error(error);
-    alert("Error guardando en Supabase");
-  }
+  console.error("Supabase error (QR):", error);
+  alert("Error al guardar en Supabase: " + error.message);
 }
 
-// ===== Registrar Visitante =====
+}
+
 async function onSubmitVisitante(e){
   e.preventDefault();
-
   const payload = {
     tipo: "registro_visitantes",
-    creado_por: usuarioActual,
     nombre: document.getElementById('vis-nombre').value,
     correo: document.getElementById('vis-correo').value,
     fecha_nac: document.getElementById('vis-fecha-nac').value,
     domicilio: document.getElementById('vis-domicilio').value,
-    telefono: document.getElementById('vis-telefono').value,
-    motivo: document.getElementById('vis-motivo').value || "",
-    delegacion: document.getElementById('vis-delegacion').value || "",
-    negocio: document.getElementById('vis-negocio').value || "",
+    telefono: document.getElementById('vis-telefono')?.value || "",
+    motivo: document.getElementById('vis-motivo')?.value || "",
+    delegacion: document.getElementById('vis-delegacion')?.value || "",
+    negocio: document.getElementById('vis-negocio')?.value || "",
     departamento: document.getElementById('vis-departamento').value,
     hora_entrada: document.getElementById('vis-hora-entrada').value,
     hora_salida: document.getElementById('vis-hora-salida').value,
-    qr_id: crypto.randomUUID()
+    qr_id: (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+Math.random()).toString(36)
   };
-
   const { error } = await supabaseClient.from('registro_visitantes').insert([payload]);
-
   if(!error){
     enviarGoogleSheets(payload);
     alert("Visitante registrado");
     e.target.reset();
   }else{
-    console.error(error);
-    alert("Error guardando visitante");
-  }
+  console.error("Supabase error (Visitante):", error);
+  alert("Error al guardar en Supabase: " + error.message);
 }
 
-// ===== Mostrar QR =====
+}
+
+// ===== QR generado =====
 function mostrarQR(qr_id, nombre){
   const cont = document.getElementById('qrcode');
   cont.classList.remove('hidden');
   cont.innerHTML = "";
-
   const canvas = document.createElement('canvas');
   QRCode.toCanvas(canvas, qr_id, { width: 240 }, function(err){});
   cont.appendChild(canvas);
-
   const p = document.createElement('p');
   p.textContent = "Este QR corresponde a: " + (nombre || "—");
   cont.appendChild(p);
-
   const a = document.createElement('a');
   a.download = (nombre || 'qr').replace(/\s+/g,'_') + "_qr.png";
   a.href = canvas.toDataURL('image/png');
@@ -324,24 +319,26 @@ function mostrarQR(qr_id, nombre){
   cont.appendChild(a);
 }
 
-// ===== Google Sheets =====
+// ===== Envío a Google Sheets =====
 function enviarGoogleSheets(data){
+  console.log("📤 Enviando a Google Sheets vía proxy:", JSON.stringify(data, null, 2));
   fetch("/api/sheets", {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
     body: JSON.stringify(data)
   })
   .then(r => r.text())
-  .then(txt => console.log("Respuesta Sheets:", txt))
-  .catch(err => console.error("Error Sheets:", err));
+  .then(txt => console.log("📥 Respuesta de Google Sheets (proxy):", txt))
+  .catch(err => console.error("❌ Error al enviar a Google Sheets vía proxy:", err));
 }
 
-// ===== Buscar por nombre =====
+
+// ===== Búsqueda por nombre =====
 async function buscarPorNombre(){
   const nombre = document.getElementById('buscar-nombre').value.trim();
   const out = document.getElementById('resultado');
   if(!nombre){ out.textContent=""; return; }
-  const { data } = await supabaseClient.from('registro_qr').select('*').ilike('nombre', `%${nombre}%`);
+  const { data, error } = await supabaseClient.from('registro_qr').select('*').ilike('nombre', `%${nombre}%`);
   out.textContent = (data && data.length) ? JSON.stringify(data[0], null, 2) : "No encontrado";
 }
 
@@ -351,59 +348,49 @@ async function startScanner(){
   const btn = document.getElementById('scan-btn');
   const reader = document.getElementById('reader');
   const help = document.getElementById('scan-help');
-
   btn.classList.add('hidden');
   reader.classList.remove('hidden');
   help.classList.remove('hidden');
-
   if(!html5QrCode) html5QrCode = new Html5Qrcode('reader');
-
   try{
     const cams = await Html5Qrcode.getCameras();
-    if(!cams.length){ alert('No se encontró cámara'); stopScanner(); return; }
-
+    if(!cams || !cams.length){ alert('No se encontró cámara'); stopScanner(); return; }
     await html5QrCode.start(
       cams[0].id,
       { fps: 10, qrbox: Math.min(260, Math.floor(window.innerWidth*0.8)) },
       onScanSuccess
     );
-
     scannerRunning = true;
   }catch(e){
     stopScanner();
   }
 }
-
 async function stopScanner(){
   const btn = document.getElementById('scan-btn');
   const reader = document.getElementById('reader');
   const help = document.getElementById('scan-help');
-
   if(html5QrCode && scannerRunning){
     try{ await html5QrCode.stop(); }catch(e){}
   }
-
   scannerRunning = false;
   reader.innerHTML = "";
   reader.classList.add('hidden');
   help.classList.add('hidden');
   btn.classList.remove('hidden');
 }
-
 async function onScanSuccess(decodedText){
   await stopScanner();
   const out = document.getElementById('resultado');
-
+  // Buscar registro original
   const { data } = await supabaseClient
     .from('registro_qr')
     .select('*')
     .eq('qr_id', decodedText)
     .single();
-
   if(data){
+    // Registrar acceso como nueva fila (histórico)
     const acceso = {
       tipo: "acceso",
-      creado_por: usuarioActual,
       nombre: data.nombre,
       correo: data.correo,
       departamento: data.departamento,
@@ -411,17 +398,14 @@ async function onScanSuccess(decodedText){
       hora: horaLocal(),
       qr_id: decodedText
     };
-
     await supabaseClient.from('accesos').insert([acceso]);
     enviarGoogleSheets(acceso);
-
-    out.textContent = "✅ Entrada registrada para " + data.nombre;
-  } else {
+    out.textContent = "✅ Entrada registrada para " + data.nombre + " a las " + acceso.hora + " del " + acceso.fecha;
+  }else{
     out.textContent = "QR no encontrado";
   }
 }
 </script>
-
 </body>
 </html>
 <!-- by christian julian gonzalez espinoza -->
